@@ -45,6 +45,7 @@ const client = net.createConnection({
         //слоумод ХАХАХАха на стороне клиента заебись
         const message = await input('> ');
         console.log(`${green(username)}: ${message}`);
+        if(cooldown) return;
         client.write(message.trim());
     }
 });
@@ -64,10 +65,7 @@ client.on('data', d => {
         process.stdout.clearLine();
         process.stdout.cursorTo(0, process.stdout.rows - 2);
         process.stdout.clearLine();
-        if(cooldown){
-        process.stdout.cursorTo(0, process.stdout.rows - 3);
-        process.stdout.clearLine();
-        }else{
+        if(!cooldown){
         cooldown = true;
         setTimeout(() => {tf = false;}, 1000);
         }
