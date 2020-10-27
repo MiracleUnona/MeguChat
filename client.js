@@ -44,9 +44,12 @@ const client = net.createConnection({
     while (!0) {
         //слоумод ХАХАХАха на стороне клиента заебись
         const message = await input('> ');
+        if (!message.trim().length) continue;
         console.log(`${green(username)}: ${message}`);
-        if(cooldown) continue;
+        if (cooldown) continue;
         client.write(message.trim());
+        cooldown = true;
+        setTimeout(() => { cooldown = false }, 1000);
     }
 });
 
@@ -65,10 +68,10 @@ client.on('data', d => {
         process.stdout.clearLine();
         process.stdout.cursorTo(0, process.stdout.rows - 2);
         process.stdout.clearLine();
-        if(!cooldown){
+        
         cooldown = true;
-        setTimeout(() => {tf = false;}, 1000);
-        }
+        setTimeout(() => { cooldown = false }, data.remain);
+        
         console.log(`Не так быстро блять! Жди ${+(data.remain / 1000).toFixed(1)}с`);
     } else if (data.type === 'welcome') {
         write(`${data.bot ? blue(data.member) : red(data.member)} присоединяется к вечеринке!\nСейчас онлайн: ${data.members.map(m => yellow(m)).join(', ')}\n> ${readline.line || ''}`);
@@ -81,7 +84,7 @@ client.on('data', d => {
         const buffers = [];
         client.on('data', d => buffers.push(d));
         client.on('end', () => {
-            fs.writeFileSync(`./${process.argv[1].match(/\w+.js$/)[0]}`, Buffer.concat(buffers));
+            fs.writeFileSync(`./${__filename.match(/\w+.js$/)[0]}`, Buffer.concat(buffers));
             console.log('Запустите клиент заново');
             process.exit(0);
         });
