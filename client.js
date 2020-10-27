@@ -60,9 +60,9 @@ client.on('data', d => {
         process.stdout.clearLine();
         console.log(`Не так быстро блять! Жди ${+(data.remain / 1000).toFixed(1)}с`);
     } else if (data.type === 'welcome') {
-        console.log(`${red(data.member)} присоединяется к вечеринке!\nСейчас онлайн: ${data.members.map(m => yellow(m)).join(', ')}`);
+        write(`${red(data.member)} присоединяется к вечеринке!\nСейчас онлайн: ${data.members.map(m => yellow(m)).join(', ')}\n> ${readline.line || ''}`);
     } else if (data.type === 'goodbye') {
-        console.log(`${red(data.member)} покидает канал.\nСейчас онлайн: ${data.members.map(m => yellow(m)).join(', ')}`);
+        write(`${red(data.member)} покидает канал.\nСейчас онлайн: ${data.members.map(m => yellow(m)).join(', ')}\n> ${readline.line || ''}`);
     } else if (data.type === 'update') {
         console.log('Обновление клиента...');
 
