@@ -1,4 +1,4 @@
-const version = '0.0.4';
+const version = '0.0.5';
 
 const fs = require('fs');
 const net = require('net');
@@ -6,8 +6,8 @@ const red = text => `\u001b[31m${text}\u001b[0m`;
 const green = text => `\u001b[32m${text}\u001b[0m`;
 const yellow = text => `\u001b[33m${text}\u001b[0m`;
 const ping = text => `\u001b[47m\u001B[30m${text}\u001b[0m`;
-const red_ping = text => `\u001b[47m\u001b[31m${text}\u001b[0m\u001b[47m\u001b[30m`;
-var mu = "";
+const redPing = text => `\u001b[47m\u001b[31m${text}\u001b[0m\u001b[47m\u001b[30m`;
+let me = '';
 let readline;
 function input(question) {
     return new Promise(resolve => {
@@ -56,7 +56,7 @@ client.on('data', d => {
     }
 
     if (data.type === 'message') {
-        if(data.content.includes('@'+mu)) write(`${green(data.author)}: ${ping(data.content.replace(/!@\w{1,18}/g, match => red_ping(match.slice(1))))}\n> ${readline.line || ''}`);
+        if(data.content.includes('@'+me)) write(`${green(data.author)}: ${ping(data.content.replace(/!@\w{1,18}/g, match => redPing(match.slice(1))))}\n> ${readline.line || ''}`);
         else write(`${green(data.author)}: ${data.content.replace(/!@\w{1,18}/g, match => yellow(match.slice(1)))}\n> ${readline.line || ''}`);
     } else if (data.type === 'ratelimit') {
         process.stdout.clearLine();
@@ -65,7 +65,7 @@ client.on('data', d => {
         console.log(`Не так быстро блять! Жди ${+(data.remain / 1000).toFixed(1)}с`);
     } else if (data.type === 'welcome') {
         write(`${red(data.member)} присоединяется к вечеринке!\nСейчас онлайн: ${data.members.map(m => yellow(m)).join(', ')}\n> ${readline.line || ''}`);
-        if(!mu) mu = data.member;
+        if (!me) me = data.member;
     } else if (data.type === 'goodbye') {
         write(`${red(data.member)} покидает канал.\nСейчас онлайн: ${data.members.map(m => yellow(m)).join(', ')}\n> ${readline.line || ''}`);
     } else if (data.type === 'update') {
