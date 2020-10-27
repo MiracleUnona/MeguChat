@@ -1,4 +1,4 @@
-const version = '0.0.6';
+const version = '0.0.7';
 
 const fs = require('fs');
 const net = require('net');
@@ -44,7 +44,7 @@ const client = net.createConnection({
         //слоумод ХАХАХАха на стороне клиента заебись
         const message = await input('> ');
         console.log(`${green(username)}: ${message}`);
-        client.write(message);
+        client.write(message.trim());
     }
 });
 
