@@ -1,4 +1,4 @@
-const version = '0.0.8';
+const version = '0.0.9';
 
 const fs = require('fs');
 const net = require('net');
@@ -10,6 +10,7 @@ const ping = text => `\u001b[47m\u001B[30m${text}\u001b[0m`;
 const redPing = text => `\u001b[47m\u001b[31m${text}\u001b[0m\u001b[47m\u001b[30m`;
 let me = '';
 let readline;
+let lastMessage = 0;
 let cooldown = false;
 function input(question) {
     return new Promise(resolve => {
@@ -45,11 +46,11 @@ const client = net.createConnection({
         //слоумод ХАХАХАха на стороне клиента заебись
         const message = await input('> ');
         if (!message.trim().length) continue;
+        if (lastMessage + 1000 > Date.now()) continue;
+
         console.log(`${green(username)}: ${message}`);
-        if (cooldown) continue;
         client.write(message.trim());
-        cooldown = true;
-        setTimeout(() => { cooldown = false }, 1000);
+        lastMessage = Date.now();
     }
 });
 
@@ -69,8 +70,7 @@ client.on('data', d => {
         process.stdout.cursorTo(0, process.stdout.rows - 2);
         process.stdout.clearLine();
         
-        cooldown = true;
-        setTimeout(() => { cooldown = false }, data.remain);
+        lastMessage = Date.now() - data.remain();
         
         console.log(`Не так быстро блять! Жди ${+(data.remain / 1000).toFixed(1)}с`);
     } else if (data.type === 'welcome') {
