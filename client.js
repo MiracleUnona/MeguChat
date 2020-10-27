@@ -1,4 +1,4 @@
-const version = '0.0.7';
+const version = '0.0.8';
 
 const fs = require('fs');
 const net = require('net');
@@ -10,6 +10,7 @@ const ping = text => `\u001b[47m\u001B[30m${text}\u001b[0m`;
 const redPing = text => `\u001b[47m\u001b[31m${text}\u001b[0m\u001b[47m\u001b[30m`;
 let me = '';
 let readline;
+let cooldown = false;
 function input(question) {
     return new Promise(resolve => {
         readline = require('readline').createInterface({
@@ -44,6 +45,7 @@ const client = net.createConnection({
         //слоумод ХАХАХАха на стороне клиента заебись
         const message = await input('> ');
         console.log(`${green(username)}: ${message}`);
+        if(cooldown) continue;
         client.write(message.trim());
     }
 });
@@ -63,6 +65,10 @@ client.on('data', d => {
         process.stdout.clearLine();
         process.stdout.cursorTo(0, process.stdout.rows - 2);
         process.stdout.clearLine();
+        if(!cooldown){
+        cooldown = true;
+        setTimeout(() => {tf = false;}, 1000);
+        }
         console.log(`Не так быстро блять! Жди ${+(data.remain / 1000).toFixed(1)}с`);
     } else if (data.type === 'welcome') {
         write(`${data.bot ? blue(data.member) : red(data.member)} присоединяется к вечеринке!\nСейчас онлайн: ${data.members.map(m => yellow(m)).join(', ')}\n> ${readline.line || ''}`);
